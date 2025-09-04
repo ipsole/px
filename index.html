@@ -160,7 +160,8 @@
         <button id="close-typing-overlay-btn" class="mt-4 text-white text-3xl">&times;</button>
     </div>
 
-    <div id="response-overlay" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-40 p-4">
+    <div id="response-backdrop" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[39]"></div>
+    <div id="response-overlay" class="hidden fixed inset-0 flex items-center justify-center z-40 p-4">
         <div class="relative rgb-glow-border rounded-2xl">
             <div class="w-full sm:max-w-lg bg-white/90 rounded-2xl shadow-[0_0_25px_rgba(255,255,255,0.9)] p-8 relative max-h-[40vh] flex flex-col">
                 <button id="close-response-btn" class="absolute top-4 right-4 text-slate-500 text-3xl hover:text-black z-10">&times;</button>
@@ -325,6 +326,7 @@
         const startTypingButton = document.getElementById('start-typing-button');
         const typingOverlay = document.getElementById('typing-overlay');
         const responseOverlay = document.getElementById('response-overlay');
+        const responseBackdrop = document.getElementById('response-backdrop');
         const responseContent = document.getElementById('response-content');
         const closeResponseBtn = document.getElementById('close-response-btn');
         const closeTypingOverlayBtn = document.getElementById('close-typing-overlay-btn');
@@ -623,6 +625,7 @@
             speedUpBtn.classList.add('hidden'); // Ensure speed up button is hidden
             setGeneratingState(false);
             responseOverlay.classList.add('hidden');
+            responseBackdrop.classList.add('hidden');
         };
 
         function setGeneratingState(generating) {
@@ -1375,6 +1378,7 @@
                 messageInput.value = '';
                 setGeneratingState(true);
                 responseOverlay.classList.remove('hidden');
+                responseBackdrop.classList.remove('hidden');
                 responseContent.innerHTML = `<div class="flex justify-center items-center h-full"><img src="https://media.istockphoto.com/id/1331167052/vector/letter-p-paper-logo-template-design.jpg?s=612x612&w=0&k=20&c=HQVvPVRw6ePUu6rWPTP7TpqEDM_n7xJOhtccMxks2m8=" alt="Thinking..." class="w-12 h-12 rounded-full blinking-logo"></div>`;
                 responseAbortController = new AbortController();
                 const result = await getAgentResponse(userMessage, responseAbortController.signal);
@@ -1386,6 +1390,7 @@
                     appendMessage(result.error, 'model', true);
                     setGeneratingState(false);
                     responseOverlay.classList.add('hidden');
+                    responseBackdrop.classList.add('hidden');
                 } else if (result.content) {
                     typeMessage(responseContent, result.content, (wasFastForwarded) => {
                         // This code runs when typing is complete, one way or another.
@@ -1400,6 +1405,7 @@
                             // Finished normally: close overlay and open input after a short delay
                             setTimeout(() => {
                                 responseOverlay.classList.add('hidden');
+                                responseBackdrop.classList.add('hidden');
                                 openTypingOverlay();
                             }, 250);
                         }
@@ -1408,13 +1414,11 @@
                 } else {
                     setGeneratingState(false);
                     responseOverlay.classList.add('hidden');
+                    responseBackdrop.classList.add('hidden');
                 }
             }
         });
     </script>
 </body>
 </html>
-
-
-
 
